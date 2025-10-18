@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.js
+*.js.map
+*.d.ts
+!gulpfile.js
+!.eslintrc.js
+!.eslintrc.prepublish.js
+.vscode/
+.idea/
+*.log
+.DS_Store
+*.tgz
