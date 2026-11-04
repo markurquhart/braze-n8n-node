@@ -1,7 +1,7 @@
 {
-  "name": "n8n-nodes-braze",
-  "version": "1.0.0",
-  "description": "n8n node for Braze customer engagement platform",
+  "name": "@markurquhart/n8n-nodes-braze",
+  "version": "2.0.0",
+  "description": "n8n community node for the Braze customer engagement platform",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -10,47 +10,32 @@
     "customer-engagement"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/yourusername/n8n-nodes-braze",
-  "author": {
-    "name": "Mark Urquhart",
-    "email": "your.email@example.com"
-  },
+  "homepage": "https://github.com/markurquhart/braze-n8n-node",
+  "author": { "name": "Mark Urquhart", "email": "mark.urquhart@braze.com" },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/n8n-nodes-braze.git"
+    "url": "git+https://github.com/markurquhart/braze-n8n-node.git"
   },
-  "main": "index.js",
   "scripts": {
-    "build": "tsc && gulp build:icons",
-    "dev": "tsc --watch",
-    "format": "prettier nodes --write",
-    "lint": "eslint nodes package.json",
-    "lintfix": "eslint nodes package.json --fix",
-    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes package.json"
+    "build": "n8n-node build",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/BrazeApi.credentials.js"
-    ],
-    "nodes": [
-      "dist/nodes/Braze/Braze.node.js"
-    ]
+    "strict": true,
+    "credentials": ["dist/credentials/BrazeApi.credentials.js"],
+    "nodes": ["dist/nodes/Braze/Braze.node.js"]
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^5.62.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.1",
-    "gulp": "^4.0.2",
+    "@n8n/node-cli": "^0.55.4",
     "n8n-workflow": "^1.0.0",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
   },
-  "peerDependencies": {
-    "n8n-workflow": "*"
-  },
-  "dependencies": {}
+  "peerDependencies": { "n8n-workflow": "*" }
 }

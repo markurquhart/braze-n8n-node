@@ -1,110 +1,123 @@
-# n8n-nodes-braze
+# @markurquhart/n8n-nodes-braze
 
-This is an n8n community node for integrating with [Braze](https://www.braze.com), a customer engagement platform.
+n8n community node for the [Braze](https://www.braze.com) REST API.
 
-[n8n](https://n8n.io/) is a fair-code licensed workflow automation platform.
+[n8n](https://n8n.io/) is a workflow automation platform. This package follows n8n's current community-node guidance: a declarative REST node, credential test, no runtime dependencies, and `usableAsTool` so the node can be called by an AI Agent.
 
 ## Installation
 
-Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+Follow the [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
 
-### Community Nodes (Recommended)
+### Community nodes
 
-1. Go to **Settings > Community Nodes** in your n8n instance
-2. Select **Install**
-3. Enter `n8n-nodes-braze` in **Enter npm package name**
-4. Agree to the risks and install
+1. Go to **Settings > Community Nodes**.
+2. Select **Install**.
+3. Enter `@markurquhart/n8n-nodes-braze`.
+4. Agree to the risks and install.
 
-### Manual Installation
+### Manual installation
 
-To install manually, navigate to your n8n installation directory and run:
+From your n8n installation directory:
 
 ```bash
-npm install n8n-nodes-braze
+npm install @markurquhart/n8n-nodes-braze
 ```
 
 ## Credentials
 
-To use this node, you'll need:
+Create a Braze REST API key under **Settings > APIs and Identifiers > API Keys**, and choose the instance that matches your dashboard.
 
-1. **API Key**: Your Braze REST API key
-2. **REST Endpoint**: Your Braze instance REST endpoint URL (e.g., `https://rest.iad-01.braze.com`)
+| Dashboard | REST endpoint |
+| --- | --- |
+| US-01 `dashboard-01.braze.com` | `https://rest.iad-01.braze.com` |
+| US-02 through US-08 | `https://rest.iad-02.braze.com` through `https://rest.iad-08.braze.com` |
+| US-10 `dashboard.us-10.braze.com` | `https://rest.us-10.braze.com` |
+| EU-01 `dashboard-01.braze.eu` | `https://rest.fra-01.braze.eu` |
+| EU-02 `dashboard-02.braze.eu` | `https://rest.fra-02.braze.eu` |
+| AU-01, ID-01, JP-01, KR-01 | `https://rest.au-01.braze.com`, `https://rest.id-01.braze.com`, `https://rest.jp-01.braze.com`, `https://rest.kr-01.braze.com` |
 
-You can find your REST endpoint at: https://www.braze.com/docs/api/basics/#endpoints
+The full list is in the [Braze API overview](https://www.braze.com/docs/api/basics/#endpoints). The credential test calls `GET /campaigns/list`, so the key needs the `campaigns.list` permission. Other operations need the permission for that endpoint. A key cannot be edited after it is created.
+
+Requests send the key as `Authorization: Bearer <REST API key>`.
 
 ## Operations
 
-This node supports the following resources and operations:
+This is a single declarative node. It covers the resources below and matches the current Braze REST API:
 
-### User
-- **Track**: Record custom events, purchases, and update user attributes
-- **Identify**: Identify an unidentified (alias-only) user
-- **Delete**: Delete a user profile
-- **Merge**: Merge two user profiles
-- **Export**: Export user data by ID or segment
-- **Create Alias**: Create a new user alias
+- User alias update, external ID rename and remove, and track status
+- User delete and export by Braze ID, alias, email, phone, or device ID
+- User merge when one side is a user alias
+- Canvas summary, and schedule create, update, and delete for campaigns and Canvases
+- Transactional campaign send, send IDs, and send analytics
+- Message schedule update and delete, scheduled broadcasts, and Live Activity updates
+- Synchronous catalog item reads and writes, plus asynchronous bulk item calls
+- Subscription groups (status v2), email subscription state, bounces, spam, and blocklist
+- SMS invalid numbers, Content Blocks, email templates, and preference center links
+- Custom events, purchases, sessions, KPIs, and Cloud Data Ingestion sync
 
-### Campaign
-- **Trigger**: Send an API-triggered campaign to specified users
-- **List**: Get a list of campaigns
-- **Get Details**: Get details of a specific campaign
-- **Get Analytics**: Get analytics data for a campaign
+List endpoints no longer send `page_size`. Braze returns a fixed page (usually 100) and uses `page`. Scheduled messages now send Braze's `schedule` object and a campaign ID. `POST /messages/schedule/create` requires that campaign ID.
 
-### Canvas
-- **Trigger**: Send an API-triggered Canvas to specified users
-- **List**: Get a list of Canvases
-- **Get Details**: Get details of a specific Canvas
-- **Get Analytics**: Get analytics data for a Canvas
+Campaign, Canvas, segment, and catalog pickers can load a list from the API or take an ID directly.
 
-### Message
-- **Send**: Send an immediate one-off message to specific users
-- **Schedule**: Schedule a message to be sent at a specific time
-
-### Segment
-- **List**: Get a list of segments
-- **Get Details**: Get details of a specific segment
-- **Get Analytics**: Get analytics data for a segment
-
-### Catalog
-- **Create**: Create a new catalog
-- **List**: Get a list of catalogs
-- **Delete**: Delete a catalog
-- **Create Item**: Create catalog items
-- **Update Item**: Update catalog items
-- **Delete Item**: Delete catalog items
-- **Get Item**: Get a specific catalog item
+Bulk catalog item calls (`Create Items`, `Update Items`, `Replace Items`, `Delete Items`) are asynchronous. Braze accepts the request before every item has finished updating. Use the single-item operations when you need a synchronous result.
 
 ## Development
 
-To build and develop this node locally:
-
 ```bash
-# Install dependencies
 npm install
-
-# Build the node
-npm run build
-
-# Create package for distribution
-npm pack
+npm run build   # n8n-node build
+npm run lint    # n8n-node lint (strict community-node rules)
 ```
 
-### Local Testing with Docker
+The project uses the [`n8n-node` CLI](https://docs.n8n.io/connect/create-nodes/build-your-node/using-the-n8n-node-tool/). `cloud-support` is enabled, so `npm run lint` checks the package against n8n Cloud rules. Verification guidelines are in [technical](https://docs.n8n.io/connect/create-nodes/build-your-node/reference/verification-guidelines/) and [UX](https://docs.n8n.io/connect/create-nodes/build-your-node/reference/ux-guidelines/) form.
 
-If you're running n8n in Docker, you can test the node locally:
+### Run n8n locally with this node
 
-1. Build the node: `npm run build`
-2. Copy to your n8n custom nodes directory in the Docker volume
-3. Restart n8n with the `N8N_CUSTOM_EXTENSIONS` environment variable
+You need **Node.js 24 or newer** and npm. Docker is not required. n8n and its database stay outside this repository.
+
+`npm run dev` is supposed to install `n8n@latest` and start it. That fails on macOS with current n8n releases: `n8n-nodes-base` 2.46 and newer depends on `@napi-rs/canvas-linux-arm64-musl`, which npm will not install on macOS. Use n8n **2.45.6** until that is fixed.
+
+**Terminal 1**, from this repository. This compiles on save and links the node into `~/.n8n-node-cli`:
+
+```bash
+npm install
+npm run dev -- --external-n8n
+```
+
+**Terminal 2.** This installs n8n in its own folder and loads the linked node:
+
+```bash
+mkdir -p ~/n8n-demo && cd ~/n8n-demo
+npm install n8n@2.45.6
+N8N_DEV_RELOAD=true N8N_USER_FOLDER="$HOME/.n8n-node-cli" DB_SQLITE_POOL_SIZE=10 npx n8n
+```
+
+Start terminal 1 first. Open the URL n8n prints (usually http://localhost:5678), create the owner account, then add a Braze API credential and use the Braze node.
+
+Leave `~/n8n-demo` and `~/.n8n-node-cli` uncommitted. The second folder holds the n8n database, workflows, and saved credentials.
+
+## Releasing
+
+Releases publish from GitHub Actions with an npm provenance statement (`.github/workflows/publish.yml`). This is required for n8n Cloud verification.
+
+1. In npm, add a Trusted Publisher for this package: GitHub Actions, owner `markurquhart`, repository `braze-n8n-node`, workflow `publish.yml`.
+2. Run `npm run release` locally. It bumps the version, tags it, and pushes.
+3. The tag push runs the workflow, which publishes to npm.
+
+## Installing on n8n Cloud
+
+n8n Cloud installs only **verified** community nodes from the Nodes panel. This package is not verified yet. Until it is, use a self-hosted instance and install it by npm name (Settings → Community Nodes).
 
 ## Compatibility
 
-Tested with n8n version 1.115.3+
+Runs on n8n 1.x and 2.x. Local development currently uses n8n 2.45.6, which requires Node.js 24 or newer. `usableAsTool` requires n8n 1.79 or newer. Verified installs on Cloud require n8n 1.94 or newer. The package has no runtime dependencies.
 
 ## Resources
 
-- [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
-- [Braze API documentation](https://www.braze.com/docs/api/home)
+- [n8n community nodes](https://docs.n8n.io/integrations/community-nodes/building-community-nodes/)
+- [Build a node](https://docs.n8n.io/connect/create-nodes/)
+- [Braze API guide](https://www.braze.com/docs/api/home/)
+- [Braze endpoint glossary](https://www.braze.com/docs/api/endpoints/)
 
 ## License
 
