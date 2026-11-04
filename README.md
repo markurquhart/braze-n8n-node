@@ -6,22 +6,9 @@ n8n community node for the [Braze](https://www.braze.com) REST API.
 
 ## Installation
 
-Follow the [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
+The package is not published to npm yet, so the only working setup right now is running this repo locally. See [Run n8n locally with this node](#run-n8n-locally-with-this-node).
 
-### Community nodes
-
-1. Go to **Settings > Community Nodes**.
-2. Select **Install**.
-3. Enter `@markurquhart/n8n-nodes-braze`.
-4. Agree to the risks and install.
-
-### Manual installation
-
-From your n8n installation directory:
-
-```bash
-npm install @markurquhart/n8n-nodes-braze
-```
+Once the package is published, self-hosted n8n users can install it from **Settings > Community Nodes**: select **Install**, enter `@markurquhart/n8n-nodes-braze`, and agree to the risks. See the [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
 
 ## Credentials
 
@@ -106,7 +93,7 @@ Releases publish from GitHub Actions with an npm provenance statement (`.github/
 
 ## Installing on n8n Cloud
 
-n8n Cloud installs only **verified** community nodes from the Nodes panel. This package is not verified yet. Until it is, use a self-hosted instance and install it by npm name (Settings → Community Nodes).
+n8n Cloud installs only **verified** community nodes from the Nodes panel. This package is not published or verified yet, so it is not available on Cloud. Once it is verified, enable **Verified community nodes** under Instance settings → Runtime and install it from the Nodes panel. Self-hosted instances can install it from Settings → Community Nodes after it is published.
 
 ## Compatibility
 
